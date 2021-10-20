@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- <script src="./libs/three.js"></script> -->
+  <script src='./libs/three.js'></script>
+  <script src='./libs/OrbitControls.js'></script>
+  <title>test</title>
+  <style>
+    *{
+      margin:0;
+      padding:0;
+    }
+    body{
+      width: 100vw;
+      height:100vh;
+    }
+    body{
+				background:#b9d3ff;
+				overflow:hidden;
+			}
+			#perspective{
+        
+				perspective:800px;
+			}
+			#wrap{
+        display: none;
+				width:120px;  /*133:200  4:6  */
+				height:180px;
+				margin:0 auto;
+				position:relative;
+
+				/*搭建3D效果必须的两个属性：一个变换风格变3d，一个场景景深800px*/
+				transform-style:preserve-3d;
+				transform:rotateX(-10deg) rotateY(0deg);
+				
+			}
+			#wrap .item{
+				width:100%;
+				height:100%;
+				position:absolute;
+				border-radius:1px;
+				
+				transform:rotateY(0deg) translateZ(0px);
+				/*倒影：朝向 偏移 遮盖*//*线性渐变(从哪里开始,开始时候的颜色,结束时候的颜色)*/
+				-webkit-box-reflect:below 5px -webkit-linear-gradient(top,rgba(0,0,0,0) 40%,rgba(0,0,0,0.5) 100%);
+			}
+			#wrap p{
+				width:1200px;
+				height:1200px;
+				background:-webkit-radial-gradient(center center,600px 600px,rgba(244,23,234,0.2),rgba(0,0,0,0));
+				border-radius:100%;
+				position:absolute;
+				left:50%;
+				top:102%;
+				margin-left:-600px;
+				margin-top:-600px;
+				transform:rotateX(90deg);
+			}
+			.item{
+				/* border:1px solid red; */
+				background:blue;
+				color:#fff;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				/* background-color: red; */
+			}
+      .btn{
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-color: transparent;
+        border-radius: 0;
+        border-width: 0;
+        position: absolute;
+        /* pointer-events: none; */
+        font-size: 1.5em;
+        color: rgba(0, 0, 0, 0.25);
+        bottom: 1.8em;
+        left: 1.8em;
+        opacity: 0;
+      }
+      .btn:after {
+        position: absolute;
+        content: "";
+        width: 3em;
+        height: 3em;
+        left: 50%;
+        top: 50%;
+        margin-left: -1.5em;
+        margin-top: -1.5em;
+        border-radius: 100%;
+    }
+    .icon {
+    display: inline-block;
+    font-size: inherit;
+    overflow: visible;
+    vertical-align: -0.125em;
+    }
+  </style>
+</head>
+<body>
+  <div id="perspective">
+    <div id='wrap'>
+      <img src="./assets/t1.png" alt="" class='item'>
+      <img src="./assets/t2.png" alt="" class='item'>
+      <img src="./assets/t3.png" alt="" class='item'>
+      <img src="./assets/t4.png" alt="" class='item'>
+      <img src="./assets/t5.png" alt="" class='item'>
+      <img src="./assets/t6.png" alt="" class='item'>
+      <!-- <div class="item">申请管理</div>
+      <div class="item">切片部署</div>
+      <div class="item">设备管理</div>
+      <div class="item">流量计划</div>
+      <div class="item">日志管理</div>
+      <div class="item">系统管理</div> -->
+    </div>
+    <div id="three">
+    </div>
+  </div>
+  <button class="btn">
+    <svg class="icon" viewBox="0 0 512 512" style="width: 1em; height: 1em;"><path transform="translate(512, 0) scale(-1,1)" fill="currentColor" d="M503.691 189.836L327.687 37.851C312.281 24.546 288 35.347 288 56.015v80.053C127.371 137.907 0 170.1 0 322.326c0 61.441 39.581 122.309 83.333 154.132 13.653 9.931 33.111-2.533 28.077-18.631C66.066 312.814 132.917 274.316 288 272.085V360c0 20.7 24.3 31.453 39.687 18.164l176.004-152c11.071-9.562 11.086-26.753 0-36.328z" class=""></path></svg>
+  </button>
+  <script>
+    var scene = new THREE.Scene();
+    scene.name = '场景1'
+    var textureLoader = new THREE.TextureLoader(); 
+    var texture1 = textureLoader.load('./assets/t1.png');
+    var texture2 = textureLoader.load('./assets/t2.png');
+    var texture3 = textureLoader.load('./assets/t3.png');
+    var texture4 = textureLoader.load('./assets/t4.png');
+    var texture5 = textureLoader.load('./assets/t5.png');
+    var texture6 = textureLoader.load('./assets/t6.png');
+    var material_1 = new THREE.MeshLambertMaterial({
+    map: texture1, // 设置纹理贴图
+  // wireframe:true,
+});
+    var material_2 = new THREE.MeshLambertMaterial({
+      map: texture2, // 设置纹理贴图
+      // wireframe:true,
+    });
+    var material_3 = new THREE.MeshLambertMaterial({
+      map: texture3, // 设置纹理贴图
+      // wireframe:true,
+    });
+    var material_4 = new THREE.MeshLambertMaterial({
+      map: texture4, // 设置纹理贴图
+      // wireframe:true,
+    });
+    var material_5 = new THREE.MeshLambertMaterial({
+      map: texture5, // 设置纹理贴图
+      // wireframe:true,
+    });
+    var material_6 = new THREE.MeshLambertMaterial({
+      map: texture6, // 设置纹理贴图
+      // wireframe:true,
+    });
+    var materialArr = [material_1,material_2,material_3,material_4,material_5,material_6];
+    var geometry = new THREE.BoxGeometry(220, 220, 220); 
+    var mesh = new THREE.Mesh(geometry, materialArr); 
+    scene.add(mesh); 
+    var directionalLight = new THREE.AmbientLight(0xffffff, 1);
+    // 设置光源的方向：通过光源position属性和目标指向对象的position属性计算
+    directionalLight.position.set(80, 100, 50);
+    // 方向光指向对象网格模型mesh2，可以不设置，默认的位置是0,0,0
+    directionalLight.target = mesh;
+    scene.add(directionalLight);
+    var width = window.innerWidth; //窗口宽度
+    var height = window.innerHeight; //窗口高度
+    var k = width / height; //窗口宽高比
+    var s = 200; //三维场景显示范围控制系数，系数越大，显示的范围越大
+    //创建相机对象
+    var camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+    camera.position.set(200, 300, 200); //设置相机位置
+    camera.lookAt(scene.position); //设置相机方向(指向的场景对象)
+    /**
+     * 创建渲染器对象
+     */
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(width, height);//设置渲染区域尺寸
+    renderer.setClearColor(0xb9d3ff, 1); //设置背景颜色
+    document.querySelector('#three').appendChild(renderer.domElement); //body元素中插入canvas对象
+    
+    
+    //点击
+    let raycaster = new THREE.Raycaster();//光线投射器
+    let mouse = new THREE.Vector2();//二维向量 
+    function renderRaycasterObj(raycaster,scene,camera,mouse) {
+    raycaster.setFromCamera(mouse, camera);
+    var intersects = raycaster.intersectObjects(scene.children);
+    if (intersects.length > 0) {
+        var currentProjectiveObjT = intersects[0].object;
+        if (projectiveObj != currentProjectiveObjT) {
+            if((currentProjectiveObjT instanceof THREE.AxisHelper) || (currentProjectiveObjT instanceof THREE.GridHelper)){
+                //穿过的是坐标轴线和网格线
+                return;
+            }
+            projectiveObj = intersects[0].object;
+        }
+    } else {
+        projectiveObj = null;
+        }
+    }
+
+    function render() {
+      renderer.render(scene,camera);//执行渲染操作
+      mesh.rotateY(0.005);
+      renderRaycasterObj(raycaster,scene,camera,mouse);//渲染光投射器投射到的对象
+      requestAnimationFrame(render);//请求再次执行渲染函数render
+    }
+    render();
+ 
+    document.addEventListener('mousemove', function(){
+        event.preventDefault();
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    }, false);
+    
+   
+    var projectiveObj;//定义上次投射到的对象
+
+    window.addEventListener('click',()=>{
+      if(projectiveObj){
+          //点击
+        document.querySelector('#wrap').style.display = 'block'
+        document.querySelector('#three').style.display = 'none'
+        document.querySelector('.btn').style.opacity = 1
+        setTimeout(runWrap,100)
+       }
+    })
+    document.querySelector('.btn').addEventListener('click',()=>{
+      document.querySelector('#wrap').style.display = 'none'
+      document.querySelector('#three').style.display = 'block'
+      document.querySelector('.btn').style.opacity = 0
+      
+    })
+    // console.log(scene.getObjectById(5))
+    // console.log(scene.getObjectByName('场景1'))
+
+    var controls = new THREE.OrbitControls(camera,renderer.domElement);
+    window.addEventListener("resize",function(){
+      width = window.innerWidth; //窗口宽度
+      height = window.innerHeight; //窗口高度
+      renderer.setSize(width, height);
+    })
+    // wrap
+    function runWrap(){
+     
+      var oWrap = document.getElementById('wrap');
+				var oImg = oWrap.querySelectorAll('.item');
+				var oImgLength = oImg.length;
+				var Deg = 360 / oImgLength;
+				var nowX , nowY , lastX , lastY , minusX = 0, minusY = 0;
+				var roY = 0 , roX = -10;
+				var timer;
+				for ( var i=0;i<oImgLength;i++ )
+				{ 
+					oImg[i].style.transform = 'rotateY('+ i*Deg +'deg) translateZ(350px)';
+					oImg[i].style.transition = 'transform 1s '+ (oImgLength-1-i)*0.1 +'s';
+
+				}
+
+				mTop();
+
+				window.onresize = mTop;
+
+				function mTop(){
+					var wH = document.documentElement.clientHeight;
+					oWrap.style.marginTop = wH / 2 - 180 + 'px';
+				}
+				
+
+				document.onmousedown = function(ev){
+					ev = ev || window.event;
+					lastX = ev.clientX;
+					lastY = ev.clientY;
+
+					this.onmousemove = function(ev){
+						ev = ev || window.event;
+						nowX = ev.clientX; 
+						nowY = ev.clientY; 
+
+						minusX = nowX - lastX; 
+						minusY = nowY - lastY;
+						roY += minusX*0.2; 
+						roX -= minusY*0.1;
+	 
+						oWrap.style.transform = 'rotateX('+ roX +'deg) rotateY('+ roY +'deg)';
+						lastX = nowX;
+						lastY = nowY;
+
+					}
+					this.onmouseup = function(){
+						this.onmousemove = null;
+					}
+					return false;
+				}
+    }
+  </script>
+</body>
+</html>
